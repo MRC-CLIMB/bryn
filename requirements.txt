@@ -13,7 +13,7 @@ django-extensions==1.6.7
 django-phonenumber-field==1.1.0
 django-pipeline==1.6.8
 django-slack==5.7.0
-ecdsa==0.13
+ecdsa==0.13.3
 enum34==1.1.6
 Fabric==1.14.0
 funcsigs==1.0.2
