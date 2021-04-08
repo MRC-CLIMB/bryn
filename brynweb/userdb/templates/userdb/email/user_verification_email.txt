@@ -1,9 +1,0 @@
-Hi {{ user.first_name }}!
-
-You (or someone pretending to be you) recently signed up for a user account on CLIMB.
-
-Before we can go any further, please validate that this is a real email address by visiting the following link:
-https://bryn.climb.ac.uk{{ validation_link }}
-
-Best regards,
-The CLIMB Project

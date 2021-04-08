@@ -1,86 +1,116 @@
 import random
 
-from fabric.contrib.files import append, exists, sed
-from fabric.api import env, local, run, put
+from pathlib import Path
+from fabric import task
+from patchwork.files import append, exists
 
-REPO_URL = 'https://github.com/MRC-CLIMB/bryn'
-
-
-def deploy():
-    site_folder = '/home/%s/sites/%s' % (env.user, env.host)
-    source_folder = site_folder + '/brynweb'
-    local_source_folder = '../brynweb'
-    _get_latest_source(site_folder)
-    _create_directory_structure(site_folder)
-    _update_settings(source_folder, env.host)
-    _copy_local_settings(local_source_folder, source_folder)
-    _update_virtualenv(site_folder)
-    _update_static_files(source_folder)
-    _update_database(source_folder)
-    _restart_gunicorn(env.host)
-    _restart_nginx()
+REPO_URL = "https://github.com/MRC-CLIMB/bryn"
 
 
-def _create_directory_structure(site_folder):
-    for subfolder in ('static', 'venv'):
-        run('mkdir -p %s/%s' % (site_folder, subfolder))
+@task
+def deploy(c):
+    """
+    Deploy brynweb to specified hosts
+
+    From the deploy_tools directory, run:
+    fab -H ubuntu@wbryn.climb.ac.uk deploy
+    """
+    site_dir = Path(f"/home/{c.user}/sites/{c.host}")
+    source_dir = site_dir / "brynweb"
+    local_source_dir = Path("../brynweb")
+
+    _create_directory_structure(c, site_dir)
+    _get_latest_source(c, site_dir)
+    _copy_local_settings(c, local_source_dir, source_dir)
+    _update_settings(c, source_dir)
+    _update_virtualenv(c, site_dir)
+    _build_frontend(c, source_dir)
+    _update_static_files(c, source_dir)
+    _update_database(c, source_dir)
+    _restart_gunicorn(c)
+    _restart_nginx(c)
 
 
-def _get_latest_source(site_folder):
-    run('mkdir -p %s' % (site_folder,))
-    if exists(site_folder + '/.git'):
-        run('cd %s && git fetch' % (site_folder,))
+def _create_directory_structure(c, site_dir):
+    for subdir in ("static", "venv"):
+        c.run(f"mkdir -p {site_dir}/{subdir}")
+
+
+def _get_latest_source(c, site_dir):
+    if exists(c, site_dir / ".git"):
+        c.run(f"cd {site_dir} && git fetch")
     else:
-        run('git clone %s %s' % (REPO_URL, site_folder))
-    current_commit = local("git log -n 1 --format=%H", capture=True)
-    run('cd %s && git reset --hard %s' % (site_folder, current_commit))
+        c.run(f"git clone {REPO_URL} {site_dir}")
+    current_commit = c.local("git log -n 1 --format=%H").stdout
+    c.run(f"cd {site_dir} && git reset --hard {current_commit}")
 
-def _update_settings(source_folder, site_name):
-    settings_path = source_folder + '/brynweb/settings.py'
-    sed(settings_path, "DEBUG = True", "DEBUG = False")
-    sed(settings_path,
-        'ALLOWED_HOSTS =.+$',
-        'ALLOWED_HOSTS = ["%s"]' % (site_name,)
+
+def _copy_local_settings(c, local_source_dir, source_dir):
+    c.put(
+        str(local_source_dir / "brynweb/locals.py"),
+        str(source_dir / "brynweb/locals.py"),
     )
-    secret_key_file = source_folder + '/brynweb/secret_key.py'
-    if not exists(secret_key_file):  #3
-        chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-        key = ''.join(random.SystemRandom().choice(chars) for _ in range(50))
-        append(secret_key_file, "SECRET_KEY = '%s'" % (key,))
-    append(settings_path, '\nfrom .secret_key import SECRET_KEY')
+    c.put(
+        str(local_source_dir / "openstack/auth_settings.py"),
+        str(source_dir / "openstack/auth_settings.py"),
+    )
 
 
-def _update_virtualenv(site_folder):
-    virtualenv_folder = site_folder + '/venv'
-    if not exists(virtualenv_folder + '/bin/pip'):
-        run('virtualenv --python=python2.7 %s' % (virtualenv_folder,))
-    run('%s/bin/pip install -r %s/requirements.txt' % (
-        virtualenv_folder, site_folder
-    ))
+def _update_settings(c, source_dir):
+    # Disable debug
+    settings_path = source_dir / "brynweb/settings.py"
+    c.run(f"sed -i 's/DEBUG = True/DEBUG = False/g' {settings_path}")
+
+    # Set allowed hosts
+    hosts_find = "ALLOWED_HOSTS =.\\+$"
+    hosts_replace = f'ALLOWED_HOSTS = ["{c.host}"]'
+    c.run(f"sed -i 's/{hosts_find}/{hosts_replace}/g' {settings_path}")
+
+    # Update SITE_SCHEME
+    site_scheme_find = "SITE_SCHEME =.\\+$"
+    site_scheme_replace = 'SITE_SCHEME = "https"'
+    c.run(f"sed -i 's/{site_scheme_find}/{site_scheme_replace}/g' {settings_path}")
+
+    # Update SITE_DOMAIN
+    site_domain_find = "SITE_DOMAIN =.\\+$"
+    site_domain_replace = f'SITE_DOMAIN = "{c.host}"'
+    c.run(f"sed -i 's/{site_domain_find}/{site_domain_replace}/g' {settings_path}")
+
+    # Create and import secret key
+    secret_key_path = source_dir / "brynweb/secret_key.py"
+    if not exists(c, secret_key_path):
+        chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
+        key = "".join(random.SystemRandom().choice(chars) for _ in range(50))
+        append(c, secret_key_path, f'SECRET_KEY = "{key}"')
+    append(c, settings_path, "\nfrom .secret_key import SECRET_KEY")
 
 
-def _copy_local_settings(local_source_folder, source_folder):
-    put(local_source_folder + '/brynweb/locals.py',
-        source_folder + '/brynweb/locals.py')
-    put(local_source_folder + '/openstack/auth_settings.py',
-        source_folder + '/openstack/auth_settings.py')
+def _update_virtualenv(c, site_dir):
+    virtualenv_dir = site_dir / "venv"
+    if not exists(c, virtualenv_dir / "bin/pip"):
+        c.run(f"python3 -m venv {virtualenv_dir}")
+    c.run(f"{virtualenv_dir}/bin/pip install -r {site_dir}/requirements.txt")
 
 
-def _update_static_files(source_folder):
-    run('cd %s && ../venv/bin/python2.7 manage.py collectstatic --noinput' % (
-        source_folder,
-    ))
+def _build_frontend(c, source_dir):
+    frontend_dir = source_dir / "frontend"
+    with c.cd(str(frontend_dir)):
+        c.run("npm install && npm run build")
 
 
-def _update_database(source_folder):
-    run('cd %s && ../venv/bin/python2.7 manage.py migrate --noinput' % (
-        source_folder,
-    ))
+def _update_static_files(c, source_dir):
+    with c.cd(str(source_dir)):
+        c.run("../venv/bin/python manage.py collectstatic --noinput")
 
 
-def _restart_gunicorn(site_name):
-    run('sudo systemctl restart gunicorn-%s' % (site_name,))
+def _update_database(c, source_dir):
+    with c.cd(str(source_dir)):
+        c.run("../venv/bin/python manage.py migrate --noinput")
 
 
-def _restart_nginx():
-    run('sudo service nginx restart')
+def _restart_gunicorn(c):
+    c.run(f"sudo systemctl restart gunicorn-{c.host}")
+
+
+def _restart_nginx(c):
+    c.run("sudo service nginx restart")

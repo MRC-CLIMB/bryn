@@ -1,34 +1,20 @@
 {% load static %}
 
 <div class="container">
-  <div class="row">
-    <div class="col-sm-4 footer-copy">
+  <div class="columns is-vcentered">
+    <div class="column has-text-white">
       <p>COPYRIGHT &copy; {% now "Y" %} - CLIMB. ALL RIGHTS RESERVED.</p>
-      <p><a href="http://www.climb.ac.uk/terms-conditions/">Terms &amp; Conditions</a> <span class="spacer">|</span> <a href="http://www.climb.ac.uk/privacy-cookie-policy/" class="privacy">Privacy Policy</a></p>
+      <p>
+        <a href="http://www.climb.ac.uk/terms-conditions/" class="has-text-link-light">
+          Terms & Conditions
+        </a>
+        <a href="http://www.climb.ac.uk/privacy-cookie-policy/" class="has-text-link-light ml-2">
+          Privacy Policy
+        </a>
+      </p>
     </div>
-    <div class="col-sm-8 unibanner">
-      <div class="row flex-row">
-        <div class="col-xs-3 unilogos">
-          <a href="http://www.swansea.ac.uk/">
-            <img src="{% static 'images/footer-su-logo.png' %}" alt="Swansea University">
-          </a>
-        </div>
-        <div class="col-xs-3 unilogos">
-          <a href="http://www2.warwick.ac.uk/">
-            <img src="{% static 'images/footer-warwick-logo.png' %}" alt="The University of Warwick">
-          </a>
-        </div>
-        <div class="col-xs-3 unilogos">
-          <a href="http://www.cardiff.ac.uk/">
-            <img src="{% static 'images/footer-cardiff-logo.png' %}" alt="Cardiff University">
-          </a>
-        </div>
-        <div class="col-xs-3 unilogos">
-          <a href="http://www.birmingham.ac.uk/index.aspx">
-            <img src="{% static 'images/footer-birmingham-logo.png' %}" alt="University of Birmingham">
-          </a>
-        </div>
-      </div>
+    <div class="column is-hidden-touch">
+      {% include "includes/institution_logos.html" %}
     </div>
   </div>
 </div>

@@ -8,13 +8,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('openstack', '0001_initial'),
+        ("openstack", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='tenant',
-            old_name='tenant_name',
-            new_name='created_tenant_id',
+            model_name="tenant",
+            old_name="tenant_name",
+            new_name="created_tenant_id",
         ),
     ]

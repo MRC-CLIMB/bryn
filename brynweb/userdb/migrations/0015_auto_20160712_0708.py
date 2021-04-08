@@ -9,18 +9,22 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0014_auto_20160711_2141'),
+        ("userdb", "0014_auto_20160711_2141"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='team',
-            name='default_region',
+            model_name="team",
+            name="default_region",
         ),
         migrations.AddField(
-            model_name='userprofile',
-            name='default_region',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='userdb.Region'),
+            model_name="userprofile",
+            name="default_region",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="userdb.Region",
+            ),
             preserve_default=False,
         ),
     ]

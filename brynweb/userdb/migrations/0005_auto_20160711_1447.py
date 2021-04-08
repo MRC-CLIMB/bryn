@@ -12,50 +12,129 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('userdb', '0004_invitation'),
+        ("userdb", "0004_invitation"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('position', models.CharField(max_length=50, verbose_name='Position (e.g. Professor)')),
-                ('department', models.CharField(max_length=50, verbose_name='Department or Institute')),
-                ('institution', models.CharField(max_length=100, verbose_name='Institution (e.g. University of St. Elsewhere)')),
-                ('phone_number', phonenumber_field.modelfields.PhoneNumberField(max_length=20, verbose_name='Phone number')),
-                ('research_interests', models.TextField(help_text='Please supply a brief synopsis of your research programme', verbose_name='Research interests')),
-                ('intended_climb_use', models.TextField(help_text='Please let us know how you or your group intend to use CLIMB', verbose_name='Intended use of CLIMB')),
-                ('held_mrc_grants', models.TextField(help_text='If you currently or recent have held grant funding from the Medical Research Council it would be very helpful if you can detail it here to assist with reporting use of CLIMB', verbose_name='Held MRC grants')),
-                ('creator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "position",
+                    models.CharField(
+                        max_length=50, verbose_name="Position (e.g. Professor)"
+                    ),
+                ),
+                (
+                    "department",
+                    models.CharField(
+                        max_length=50, verbose_name="Department or Institute"
+                    ),
+                ),
+                (
+                    "institution",
+                    models.CharField(
+                        max_length=100,
+                        verbose_name="Institution (e.g. University of St. Elsewhere)",
+                    ),
+                ),
+                (
+                    "phone_number",
+                    phonenumber_field.modelfields.PhoneNumberField(
+                        max_length=20, verbose_name="Phone number"
+                    ),
+                ),
+                (
+                    "research_interests",
+                    models.TextField(
+                        help_text="Please supply a brief synopsis of your research programme",
+                        verbose_name="Research interests",
+                    ),
+                ),
+                (
+                    "intended_climb_use",
+                    models.TextField(
+                        help_text="Please let us know how you or your group intend to use CLIMB",
+                        verbose_name="Intended use of CLIMB",
+                    ),
+                ),
+                (
+                    "held_mrc_grants",
+                    models.TextField(
+                        help_text=(
+                            "If you currently or recent have held grant funding from the Medical Research Council "
+                            "it would be very helpful if you can detail it here to assist with reporting use of CLIMB"
+                        ),
+                        verbose_name="Held MRC grants",
+                    ),
+                ),
+                (
+                    "creator",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='TeamMembers',
+            name="TeamMembers",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_admin', models.BooleanField(default=False)),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='userdb.Team')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_admin", models.BooleanField(default=False)),
+                (
+                    "team",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="userdb.Team"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.RemoveField(
-            model_name='groupprofile',
-            name='group',
+            model_name="groupprofile",
+            name="group",
         ),
         migrations.RemoveField(
-            model_name='invitation',
-            name='to_group',
+            model_name="invitation",
+            name="to_group",
         ),
         migrations.DeleteModel(
-            name='GroupProfile',
+            name="GroupProfile",
         ),
         migrations.AddField(
-            model_name='invitation',
-            name='to_team',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, to='userdb.Team'),
+            model_name="invitation",
+            name="to_team",
+            field=models.ForeignKey(
+                default="",
+                on_delete=django.db.models.deletion.CASCADE,
+                to="userdb.Team",
+            ),
             preserve_default=False,
         ),
     ]

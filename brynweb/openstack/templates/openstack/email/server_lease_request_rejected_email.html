@@ -1,0 +1,14 @@
+{% extends "email/email_base.html" %}
+
+{% block title %}{% include 'openstack/email/server_lease_request_granted_subject.txt' %}{% endblock %}
+{% block subject %}{% include 'openstack/email/server_lease_request_granted_subject.txt' %}{% endblock %}
+
+{% block content %}
+  <p>Dear {{ server_lease_request.user.first_name }} {{ server_lease_request.user.last_name }},</p>
+
+  <p>Your request for an Indefinite Server Lease for '{{ server_lease_request.server_lease.server_name }}' has been rejected.</p>
+
+  <p>Please see the following response from our sysadmin:</p>
+
+  <p>{{ server_lease_request.response }}</p>
+{% endblock %}

@@ -1,214 +1,263 @@
-from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.contrib import messages
-from django.contrib.auth import (
-    REDIRECT_FIELD_NAME, authenticate, login as auth_login)
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.sites.shortcuts import get_current_site
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.shortcuts import render, get_object_or_404, resolve_url
-from django.template.response import TemplateResponse
-from django.utils.http import is_safe_url
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import views as auth_views, get_user_model, login
+from django.db import transaction
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse, reverse_lazy
+from django.utils.http import urlsafe_base64_decode
+from django.views.decorators.http import require_http_methods
+from django.views.generic import RedirectView, TemplateView
+from django.views.generic.edit import FormView
 
-from .forms import CustomUserCreationForm, TeamForm, InvitationForm
-from .models import (Institution, Team, TeamMember, Invitation, UserProfile,
-                     Region)
+from .forms import (
+    CustomAuthenticationForm,
+    CustomSetPasswordForm,
+    InvitedUserCreationForm,
+    PrimaryUserCreationForm,
+    RegistrationScreeningForm,
+    TeamForm,
+)
+from .models import LicenceAcceptance, LicenceVersion, Invitation, TeamMember
+from .tokens import account_activation_token
 
-
-def register(request):
-    if request.method == 'POST':
-        userform = CustomUserCreationForm(request.POST)
-        teamform = TeamForm(request.POST)
-
-        if userform.is_valid() and teamform.is_valid():
-            user = userform.save()
-
-            profile = UserProfile()
-            profile.current_region = Region.objects.get(name='warwick')
-            profile.send_validation_link(user)
-
-            # add team
-            team = teamform.save(commit=False)
-            team.creator = user
-            team.verified = False
-            team.default_region = Region.objects.get(name='warwick')
-            team.save()
-
-            # add team member
-            member = TeamMember()
-            member.team = team
-            member.user = user
-            member.is_admin = True
-            member.save()
-
-            messages.success(
-                request,
-                "Thank you for registering. Your request will be approved by "
-                "an administrator and you will receive an email with further "
-                "instructions")
-
-            # notify admins
-            team.new_registration_admin_email()
-
-            return HttpResponseRedirect(reverse('home:home'))
-    else:
-        userform = CustomUserCreationForm()
-        teamform = TeamForm()
-
-    return render(request, 'userdb/register.html',
-                  {'userform': userform,
-                   'teamform': teamform})
+User = get_user_model()
 
 
-@login_required
-def invite(request):
-    if request.method == 'POST':
-        form = InvitationForm(request.user, request.POST)
-        if form.is_valid():
-            if Invitation.objects.filter(email=form.cleaned_data['email'],
-                                         to_team=form.cleaned_data['to_team']):
-                messages.error(request,
-                               "User has already been invited to this team.")
-            else:
-                invitation = form.save(commit=False)
-                invitation.send_invitation(request.user)
-
-                messages.success(request, 'Invitation sent.')
-    else:
-        messages.error(request, 'No information supplied for invitation')
-    return HttpResponseRedirect(reverse('home:home'))
+# Auth views
+class LoginView(auth_views.LoginView):
+    template_name = "userdb/login.html"
+    form_class = CustomAuthenticationForm
 
 
-def institution_typeahead(request):
-    q = request.GET.get('q', '')
-    if q:
-        matches = (Institution.objects
-                   .filter(name__icontains=q)
-                   .values_list('name', flat=True)[:10])
-    else:
-        matches = Institution.objects.all().values_list('name', flat=True)
-    data = list(matches)
-    return JsonResponse(data, safe=False)
+class PasswordResetView(auth_views.PasswordResetView):
+    template_name = "userdb/password_reset_form.html"
+    email_template_name = "userdb/email/password_reset_email.txt"
+    html_email_template_name = "userdb/email/password_reset_email.html"
+    subject_template_name = "userdb/email/password_reset_subject.txt"
+    success_url = reverse_lazy("user:password_reset_done")
 
 
-def accept_invite(request, uuid):
-    i = get_object_or_404(Invitation, uuid=uuid)
-    if request.method == 'POST':
-        userform = CustomUserCreationForm(request.POST)
-        if userform.is_valid():
-            user = userform.save()
-
-            # add user profile
-            profile = UserProfile()
-            profile.user = user
-            profile.current_region = Region.objects.get(name='warwick')
-            profile.email_validated = True
-            profile.save()
-
-            # add team member
-            member = TeamMember()
-            member.team = i.to_team
-            member.user = user
-            member.is_admin = False
-            member.save()
-
-            i.accepted = True
-            i.save()
-
-            messages.success(
-                request,
-                "Congratulations you are now a member of %s. "
-                "Please log-in to get started." % (member.team))
-            return HttpResponseRedirect(reverse('home:home'))
-        else:
-            messages.error(request, 'Invalid values supplied for form.')
-    else:
-        i = Invitation.objects.get(uuid=uuid)
-        if i.accepted:
-            messages.error(request,
-                           "This invitation has already been claimed!")
-            return HttpResponseRedirect(reverse('home:home'))
-
-        userform = CustomUserCreationForm()
-        userform.initial['email'] = i.email
-
-    return render(request, 'userdb/user-register.html', {'form': userform})
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = "userdb/password_reset_done.html"
 
 
-def validate_email(request, uuid):
-    profile = get_object_or_404(UserProfile, validation_link=uuid)
-    profile.email_validated = True
-    profile.save()
-    messages.success(
-        request,
-        "Thank you for confirming your email address, "
-        "you can now log-in to get started.")
-    return HttpResponseRedirect(reverse('home:home'))
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = "userdb/password_reset_confirm.html"
+    success_url = reverse_lazy("user:password_reset_complete")
+    form_class = CustomSetPasswordForm
 
 
-def login(request):
-    """
-    Copied from django source, but modified to reject where email not verified
-    Displays the login form and handles the login action.
-    """
-    redirect_to = request.POST.get(REDIRECT_FIELD_NAME,
-                                   request.GET.get(REDIRECT_FIELD_NAME, ''))
+class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = "userdb/password_reset_complete.html"
+
+
+class RegistrationScreeningView(FormView):
+    """Registration screening view"""
+
+    template_name = "userdb/register.html"
+    form_class = RegistrationScreeningForm
+    success_url = reverse_lazy("user:register_team")
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        try:
+            licence_terms = LicenceVersion.objects.current().licence_terms
+        except LicenceVersion.DoesNotExist:
+            licence_terms = None
+        context["licence_terms"] = licence_terms
+        return context
+
+
+def team_registration_view(request):
+    """Team registration form view"""
 
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
+        user_form = PrimaryUserCreationForm(request.POST)
+        team_form = TeamForm(request.POST)
 
-            # Ensure the user-originating redirection url is safe.
-            if not is_safe_url(url=redirect_to, host=request.get_host()):
-                redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+        if user_form.is_valid() and team_form.is_valid():
+            with transaction.atomic():
+                user = user_form.save(
+                    commit=False
+                )  # profile instance is created via. signal
+                user.is_active = False  # pending email validation
+                user.save()
 
-            print("Redirect to " + redirect_to)
+                # create team
+                team = team_form.save(commit=False)
+                team.creator = user
+                team.save()
 
-            # Okay, security check complete. Log the user in.
-            user = authenticate(username=form.cleaned_data['username'],
-                                password=form.cleaned_data['password'])
+                # create team member
+                member = TeamMember(team=team, user=user, is_admin=True)
+                member.save()
 
-            if user:
-                teams = Team.objects.filter(teammember__user=user)
-                if not user.userprofile.email_validated:
-                    messages.error(
-                        request,
-                        "Please validate your email address "
-                        "by following the link sent to your email first.")
-                elif not user.is_active:
-                    messages.error(
-                        request,
-                        "Sorry, your account is disabled.")
-                elif not any(team.verified for team in teams):
-                    messages.error(
-                        request,
-                        "Your team hasn't been verified yet. Please "
-                        "check back later.")
-                else:
-                    # All conditions met, login
-                    auth_login(request, user)
-                    return HttpResponseRedirect(redirect_to)
+                # create initial licence  acceptance
+                licence_acceptance = LicenceAcceptance(user=user, team=team)
+                licence_acceptance.save()
 
-            return HttpResponseRedirect(reverse('user:login'))
+            return HttpResponseRedirect(reverse("user:register_team_done"))
     else:
-        form = AuthenticationForm(request)
+        user_form = PrimaryUserCreationForm()
+        team_form = TeamForm()
 
-    current_site = get_current_site(request)
+    return render(
+        request,
+        "userdb/register_team.html",
+        {"user_form": user_form, "team_form": team_form},
+    )
 
-    context = {
-        'form': form,
-        REDIRECT_FIELD_NAME: redirect_to,
-        'site': current_site,
-        'site_name': current_site.name,
-    }
 
-    return TemplateResponse(request, 'userdb/login.html', context)
+class TeamRegistrationDoneView(TemplateView):
+    """Team registration done view"""
 
-@user_passes_test(lambda u: u.is_superuser)
-def active_users(request):
-    recordset = TeamMember.objects.filter(team__verified=True)
-    txt = "\n".join(["%s\t%s\t%s\t%s\t%s" % (u.user.first_name, u.user.last_name, u.user.email, u.team.institution, u.team.name) for u in recordset])
-    return HttpResponse(txt, content_type='text/plain')
+    template_name = "userdb/register_team_done.html"
 
+
+class EmailValidationSentView(TemplateView):
+    """User email validation sent view"""
+
+    template_name = "userdb/email_validation_sent.html"
+
+
+class EmailValidationConfirmView(RedirectView):
+    """Mark user profile as email validated and redirect to login"""
+
+    pattern_name = "home:home"
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Check activation token"""
+        try:
+            user_id = urlsafe_base64_decode(kwargs.pop("uidb64"))
+            user = User.objects.get(pk=user_id)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise Http404
+
+        if account_activation_token.check_token(user, kwargs.pop("token")):
+            user.profile.mark_email_validated()
+            messages.success(
+                self.request, "Thank you for confirming your email address."
+            )
+        else:
+            messages.error(
+                self.request,
+                "Account activation link has expired. We've sent you a new one!",
+            )
+            user.profile.send_validation_link()
+
+        return super().get_redirect_url(*args, **kwargs)
+
+
+class EmailChangeConfirmView(RedirectView):
+    """Confirm email change and redirect to home"""
+
+    pattern_name = "home:home"
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Check activation token"""
+        try:
+            user_id = urlsafe_base64_decode(kwargs.pop("uidb64"))
+            user = User.objects.get(pk=user_id)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise Http404
+
+        if account_activation_token.check_token(user, kwargs.pop("token")):
+            user.profile.confirm_email_change()
+            messages.success(self.request, "Your new email address has been verified.")
+        else:
+            messages.error(
+                self.request,
+                "Your email verification link has expired. We've sent you a new one!",
+            )
+            user.profile.send_email_change_verification(self.request)
+
+        return super().get_redirect_url(*args, **kwargs)
+
+
+@require_http_methods(["GET", "POST"])
+def accept_invitation_view(request, uuid):
+    """Accept invitation / user signup view"""
+    # Confirm invitation is valid, and has not been accepted already
+    invitation = get_object_or_404(Invitation, uuid=uuid)
+    if invitation.accepted:
+        messages.error(request, "This invitation has already been accepted.")
+        return HttpResponseRedirect(reverse("home:home"))
+
+    success_message = (
+        f"Congratulations! You are now a member of {invitation.to_team.name}"
+    )
+
+    if request.method == "GET":
+        # Handle logged in user case
+        if request.user.is_authenticated:
+            if request.user.email != invitation.email:
+                # Email does not match
+                messages.error(
+                    request,
+                    "You cannot accept this team invitation, because the email address does not match the one "
+                    "associated with your account. Please sign in with a different account, or request a new invite.",
+                )
+                return HttpResponseRedirect(reverse("user:logout"))
+            else:
+                # Email matches
+                invitation.create_team_membership(request.user)
+                messages.success(request, success_message)
+                return HttpResponseRedirect(reverse("home:home"))
+
+        # Not logged in GET: initialise form
+        form = InvitedUserCreationForm(initial={"email": invitation.email})
+
+    # POST: Create User and TeamMembership, redirect to login
+    if request.method == "POST":
+        form = InvitedUserCreationForm(
+            request.POST, initial={"email": invitation.email}
+        )
+        if form.is_valid():
+            with transaction.atomic():
+                user = form.save()
+                teammember = invitation.create_team_membership(user)
+
+                user.profile.email_validated = True  # Since they received the invite
+                user.profile.default_team_membership = (
+                    teammember  # Since it's their first & only team
+                )
+                user.save()
+
+            messages.success(request, success_message)
+            login(
+                request,
+                user,
+                backend="django.contrib.auth.backends.AllowAllUsersModelBackend",
+            )
+            return HttpResponseRedirect(reverse("home:home"))
+
+    login_url = f"{reverse('user:login')}?next={request.path}"
+
+    try:
+        licence_terms = LicenceVersion.objects.current().licence_terms
+    except LicenceVersion.DoesNotExist:
+        licence_terms = None
+
+    return render(
+        request,
+        "userdb/accept_invitation_register.html",
+        {
+            "form": form,
+            "licence_terms": licence_terms,
+            "login_url": login_url,
+            "to_team": invitation.to_team,
+        },
+    )
+
+
+class CurrentUserLicenceView(TemplateView):
+    template_name = "userdb/user_licence.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            licence_version = LicenceVersion.objects.current()
+        except LicenceVersion.DoesNotExist:
+            licence_version = None
+        context["licence_version"] = licence_version
+        return context

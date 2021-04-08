@@ -1,0 +1,16 @@
+{% extends "email/email_base.html" %}
+{% load custom_tags %}
+
+{% block title %}{% include 'userdb/email/user_email_change_verification_subject.txt' %}{% endblock %}
+{% block subject %}{% include 'userdb/email/user_email_change_verification_subject.txt' %}{% endblock %}
+
+{% block content %}
+  <p>Hi {{ user.first_name }}!</p>
+
+  <p>You've recently requested that the email address associated with your CLIMB-BIG-DATA account be changed to {{ user.profile.new_email_pending_verification }}</p>
+
+  <p>Before we can go any further, please verify that this is a real email address by visiting the following link:<br>
+  <span style="white-space: nowrap; font-size: 0.8em;">{{ validation_link|absolute_url|urlize }}</span></p>
+
+  <p>If you don't know what we're talking about, please ignore this email - no further action is required.</p>
+{% endblock %}

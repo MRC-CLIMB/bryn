@@ -1,4 +1,5 @@
 {% extends "email/email_base.html" %}
+{% load custom_tags %}
 
 {% block title %}{% include 'userdb/email/notify_team_verified_subject.txt' %}{% endblock %}
 {% block subject %}{% include 'userdb/email/notify_team_verified_subject.txt' %}{% endblock %}
@@ -10,17 +11,10 @@
 
 <p>We are pleased to inform you that your application has been successful!</p>
 
-<p>Your account is now active and you can sign into your group at: <a href="https://bryn.climb.ac.uk">https://bryn.climb.ac.uk</a></p>
+<p>Your account is now active and you can sign into your group at: {% url "home:home" as home_url %}{{ home_url|absolute_url|urlize }}</p>
 
 <p>Upon logging-in you can now begin to invite others to join your group and register as new CLIMB users.</p>
 
-<p>To get started, please view the tutorials at the <a href="https://discourse.climb.ac.uk">CLIMB Community forum</a>.</p>
-
-<p><a href="https://bryn.climb.ac.uk/status">CLIMB status page</a></p>
-
-<p>Please note that use of this service implies acceptance of the CLIMB acceptable use policy that can be viewed at:
-<a href="https://discourse.climb.ac.uk/t/climb-big-data-terms-and-conditions-for-users-may-2020/1236">https://discourse.climb.ac.uk/t/climb-big-data-terms-and-conditions-for-users-may-2020/1236</a></p>
-
-<p>Best regards,<br>
-The CLIMB Project</p>
+<p>Please note that use of this service implies acceptance of the CLIMB acceptable use policy that can be viewed at: 
+{% url "user:licence" as licence_url %}{{ licence_url|absolute_url|urlize }}
 {% endblock %}

@@ -8,12 +8,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('openstack', '0002_auto_20160712_1150'),
+        ("openstack", "0002_auto_20160712_1150"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='tenant',
-            name='auth_username',
+            model_name="tenant",
+            name="auth_username",
         ),
     ]

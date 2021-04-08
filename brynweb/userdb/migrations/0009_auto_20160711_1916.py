@@ -8,17 +8,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0008_userprofile'),
+        ("userdb", "0008_userprofile"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='userprofile',
+            name="userprofile",
             options={},
         ),
         migrations.AlterModelManagers(
-            name='userprofile',
-            managers=[
-            ],
+            name="userprofile",
+            managers=[],
         ),
     ]

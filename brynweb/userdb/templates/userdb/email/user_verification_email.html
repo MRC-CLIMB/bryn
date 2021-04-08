@@ -1,4 +1,5 @@
 {% extends "email/email_base.html" %}
+{% load custom_tags %}
 
 {% block title %}{% include 'userdb/email/user_verification_subject.txt' %}{% endblock %}
 {% block subject %}{% include 'userdb/email/user_verification_subject.txt' %}{% endblock %}
@@ -6,17 +7,8 @@
 {% block content %}
   <p>Hi {{ user.first_name }}!</p>
 
-  <p>You (or someone pretending to be you) recently signed up for a user account on CLIMB.</p>
+  <p>You (or someone pretending to be you) recently signed up for a user account on CLIMB-BIG-DATA.</p>
 
-  <p>Before we can go any further, please validate that this is a real email address by visiting the following link:<br>
-  <a href="https://bryn.climb.ac.uk{{ validation_link }}">https://bryn.climb.ac.uk{{ validation_link }}</a></p>
-
-  <p>To get started, please view the tutorials at the <a href="https://discourse.climb.ac.uk">CLIMB Community forum</a>.</p>
-
-  <p><a href="https://bryn.climb.ac.uk/status">CLIMB status page</a></p>
-
-  <p>
-
-  <p>Best regards,<br>
-  <p>The CLIMB Project</p>
+  <p>Before we can go any further, please verify that this is a real email address by visiting the following link:<br>
+  <span style="white-space: nowrap; font-size: 0.8em;">{{ validation_link|absolute_url|urlize }}</span></p>
 {% endblock %}

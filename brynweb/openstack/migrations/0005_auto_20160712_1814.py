@@ -9,13 +9,15 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('openstack', '0004_regionsettings'),
+        ("openstack", "0004_regionsettings"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='regionsettings',
-            name='region',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='userdb.Region'),
+            model_name="regionsettings",
+            name="region",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, to="userdb.Region"
+            ),
         ),
     ]

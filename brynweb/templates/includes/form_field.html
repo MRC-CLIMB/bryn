@@ -1,0 +1,21 @@
+{% load widget_tweaks %}
+
+<div class="field">
+  <label class="label {% if hide_label %}is-sr-only{% endif %}" for="{{ field.id_for_label }}">{{ field.label }}</label>
+  <div class="control {% if fa_class %}has-icons-left{% endif %}">
+    {% if field.errors %}
+      {{ field|add_class:"input is-danger"}}
+    {% else %}
+      {{ field|add_class:"input" }}
+    {% endif %}
+    {% if fa_class %}
+      <span class="icon is-small is-left">
+        <i class="{{ fa_class }}"></i>
+      </span>
+    {% endif %}
+  </div>
+  {% if field.help_text %}
+    <p class="help">{{ field.help_text }}</p>
+  {% endif %}
+  {% include 'includes/form_field_errors.html' with errors=field.errors only %}
+</div>

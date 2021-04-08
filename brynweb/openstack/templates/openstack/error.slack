@@ -1,5 +1,0 @@
-{% extends django_slack %}
-
-{% block text %}
-Oh dear! An error was reported for {{ log.tenant }} : {{ log.message }}
-{% endblock %}

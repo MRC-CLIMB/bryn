@@ -8,8 +8,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0010_team_verified'),
+        ("userdb", "0010_team_verified"),
     ]
 
-    operations = [
-    ]
+    operations = []

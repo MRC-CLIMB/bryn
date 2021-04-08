@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <section class="hero is-primary is-primary-gradient is-fullheight-with-navbar">
+    <div class="hero-body">
+      <div class="container">
+
+        <div class="columns is-centered">
+          <div class="column {% block card_column_size_classes %}is-two-thirds-tablet is-half-desktop is-one-third-widescreen{% endblock %}">
+
+            {% block above_card %}{% endblock %}
+
+            <div class="card">
+              <div class="card-content">
+                {% include 'includes/messages.html' %}
+
+                {% block card_content %}{% endblock %}
+
+              </div>
+            </div>
+
+            {% block below_card %}{% endblock %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

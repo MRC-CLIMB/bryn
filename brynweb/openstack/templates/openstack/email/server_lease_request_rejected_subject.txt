@@ -1,0 +1,1 @@
+CLIMB-BIG-DATA: Indefinite Server Lease request rejected for '{{ server_lease_request.server_lease.server_name }}'

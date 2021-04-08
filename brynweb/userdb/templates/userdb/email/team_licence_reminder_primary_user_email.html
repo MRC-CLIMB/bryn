@@ -1,0 +1,23 @@
+{% extends "email/email_base.html" %}
+{% load custom_tags %}
+
+{% block title %}{% include 'userdb/email/team_licence_reminder_subject.txt' %}{% endblock %}
+{% block subject %}{% include 'userdb/email/team_licence_reminder_subject.txt' %}{% endblock %}
+
+{% block content %}
+<p>Dear {{ user.first_name }} {{ user.last_name}},</p>
+
+<p>We are writing because your CLIMB-BIG-DATA Primary User licence for the group '{{ team.name }}' is due for renewal in {{ time_remaining.days }} days ({{ team.licence_expiry }}).</p>
+
+<p>Please renew your licence by logging in at {{ team_management_url|absolute_url|urlize }}, and following the instructions under the licence renewal panel.</p>
+
+<p>If you don't renew your licence before {{ team.licence_expiry }}, we will shelve all the VMs associated with your group.</p>
+
+<p>If you then do not renew your licence by {{ termination_date }}, we will terminate all your VMs.</p>
+
+<p>If you fail to renew your licence, you will still be able to apply for a new licence anytime in the future.</p>
+
+<p>Please always remember to terminate your VMs if you have finished using them.</p>
+
+<p>If you have any questions, please don't hesitate to get in touch.</p>
+{% endblock %}

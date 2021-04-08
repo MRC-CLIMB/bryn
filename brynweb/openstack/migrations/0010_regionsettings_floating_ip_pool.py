@@ -8,14 +8,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('openstack', '0009_hypervisorstats'),
+        ("openstack", "0009_hypervisorstats"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='regionsettings',
-            name='floating_ip_pool',
-            field=models.CharField(default='', max_length=50),
+            model_name="regionsettings",
+            name="floating_ip_pool",
+            field=models.CharField(default="", max_length=50),
             preserve_default=False,
         ),
     ]

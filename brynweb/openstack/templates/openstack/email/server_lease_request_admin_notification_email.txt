@@ -1,0 +1,14 @@
+Dear CLIMB admin,
+
+A new Indefinite Server Lease Request has been received for a VM at {{ server_lease_request.server_lease.tenant.region.name }}
+
+[{{ server_lease_request }}]
+
+{{ server_lease_request.user.email }} included the following message:
+--------
+{{ server_lease_request.message }}
+
+Please respond to this request via. the Bryn admin.
+
+Kind regards,
+BrynBot

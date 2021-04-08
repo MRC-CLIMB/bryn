@@ -1,0 +1,13 @@
+{% extends "userdb/base_primary_card.html" %}
+
+{% block card_column_size_classes %}is-full-tablet is-full-desktop is-two-thirds-widescreen{% endblock %}
+
+{% block above_card %}
+  <h1 class="title">CLIMB-BIG-DATA User Licence: Version {{ licence_version.version_number }}</h1>
+{% endblock %}
+
+{% block card_content %}
+  <div class="content">
+    {{ licence_version.licence_terms|safe }}
+  </div>
+{% endblock %}

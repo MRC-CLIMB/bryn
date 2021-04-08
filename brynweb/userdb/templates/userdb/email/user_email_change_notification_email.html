@@ -1,0 +1,16 @@
+{% extends "email/email_base.html" %}
+
+{% block title %}{% include 'userdb/email/user_email_change_notification_subject.txt' %}{% endblock %}
+{% block subject %}{% include 'userdb/email/user_email_change_notification_subject.txt' %}{% endblock %}
+
+{% block content %}
+  <p>Hi {{ user.first_name }}!</p>
+
+  <p>You've recently requested that the email address associated with your CLIMB-BIG-DATA account be changed to {{ user.profile.new_email_pending_verification }}</p>
+
+  <p>You should have received a verification email at the new address, containing a link to verify the change.<br>
+
+  <p>Please note, that the new email address is only effective once verified.</p>
+
+  <p>If you didn't request this change, then someone else may have gained access to your account. Please reset your password immediately and contact support for further assistance.</p>
+{% endblock %}

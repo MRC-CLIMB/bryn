@@ -1,10 +1,15 @@
-from django.conf.urls import url, include
+from django.urls import include, path, register_converter
 from django.contrib import admin
 
+from core.converters import HashidsConverter
+
+register_converter(HashidsConverter, "hashids")
+
 urlpatterns = [
-    url(r'^user/', include('userdb.urls', namespace='user')),
-    url(r'^reports/', include('reporting.urls', namespace='reports')),
-    url(r'^discourse/', include('discourse.urls', namespace='discourse')),
-    url(r'^admin/', admin.site.urls),
-    url(r'', include('home.urls', namespace='home')),
+    path("api/", include("core.api")),
+    path("admin/", admin.site.urls),
+    path("discourse/", include("discourse.urls")),
+    path("service/", include("openstack.urls")),
+    path("user/", include("userdb.urls")),
+    path("", include("home.urls")),
 ]

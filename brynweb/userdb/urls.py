@@ -1,36 +1,57 @@
-from django.conf.urls import url
+from django.urls import path
 from django.contrib.auth import views as auth_views
 
 from . import views
 
+app_name = "user"
+
 urlpatterns = [
-    url(r'^login/$', views.login, name='login'),
-    url(r'^logout/$', auth_views.logout_then_login, name='logout'),
-    url(r'^password_reset/$', auth_views.password_reset,
-        {'template_name': 'userdb/password_reset_form.html',
-         'email_template_name': 'userdb/email/password_reset_email.txt',
-         'html_email_template_name': 'userdb/email/password_reset_email.html',
-         'subject_template_name': 'userdb/email/password_reset_subject.txt',
-         'post_reset_redirect': 'user:password_reset_done'},
-        name='password_reset'),
-    url(r'^password_reset/done/$', auth_views.password_reset_done,
-        {'template_name': 'userdb/password_reset_done.html'},
-        name='password_reset_done'),
-    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        auth_views.password_reset_confirm,
-        {'template_name': 'userdb/password_reset_confirm.html',
-         'post_reset_redirect': 'user:password_reset_complete'},
-        name='password_reset_confirm'),
-    url(r'^reset/done/$', auth_views.password_reset_complete,
-        {'template_name': 'userdb/password_reset_complete.html'},
-        name='password_reset_complete'),
-    url(r'^register/$', views.register, name='register'),
-    url(r'^invite/$', views.invite, name='invite'),
-    url(r'^accept-invite/(?P<uuid>[^/]+)$', views.accept_invite,
-        name='accept-invite'),
-    url(r'^validate-email/(?P<uuid>[^/]+)$', views.validate_email,
-        name='validate-email'),
-    url(r'^institutions/typeahead/$', views.institution_typeahead,
-        name='institution_typeahead'),
-    url(r'^active-users$', views.active_users, name='active-users')
+    # Auth routes
+    path("login/", views.LoginView.as_view(), name="login"),
+    path("logout/", auth_views.logout_then_login, name="logout"),
+    path("password_reset/", views.PasswordResetView.as_view(), name="password_reset"),
+    path(
+        "password_reset/done/",
+        views.PasswordResetDoneView.as_view(),
+        name="password_reset_done",
+    ),
+    path(
+        r"reset/<uidb64>/<token>/",
+        views.PasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset/done/",
+        views.PasswordResetCompleteView.as_view(),
+        name="password_reset_complete",
+    ),
+    # Registration
+    path("register/", views.RegistrationScreeningView.as_view(), name="register",),
+    path("register/team/", views.team_registration_view, name="register_team"),
+    path(
+        "register/team/done/",
+        views.TeamRegistrationDoneView.as_view(),
+        name="register_team_done",
+    ),
+    path(
+        "email-validation-sent",
+        views.EmailValidationSentView.as_view(),
+        name="email_validation_sent",
+    ),
+    path(
+        "accept-invitation/<uuid:uuid>/",
+        views.accept_invitation_view,
+        name="accept_invitation",
+    ),
+    path(
+        "validate-email/<uidb64>/<token>/",
+        views.EmailValidationConfirmView.as_view(),
+        name="validate_email",
+    ),
+    path(
+        "validate-email-change/<uidb64>/<token>/",
+        views.EmailChangeConfirmView.as_view(),
+        name="validate_email_change",
+    ),
+    path("licence/", views.CurrentUserLicenceView.as_view(), name="licence",),
 ]

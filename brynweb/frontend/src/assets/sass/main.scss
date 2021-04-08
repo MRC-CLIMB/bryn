@@ -1,0 +1,93 @@
+@charset "utf-8";
+
+// Fonts
+@import url("https://fonts.googleapis.com/css2?family=Bungee&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+
+// Bulma
+
+@import "~bulma/sass/utilities/initial-variables";
+
+$body-size: 15px;
+
+// Brand colors
+$charcoal: #264653ff;
+$imperial-red: #e63946ff;
+$sandy-brown: #f4a261ff;
+$honeydew: #f1faeeff;
+$powder-blue: #a8dadcff;
+$celadon-blue: #457b9dff;
+$prussian-blue: #1d3557ff;
+$illuminating-emerald: #1e9577ff;
+$climb-blue: #2d3e48;
+
+// Update Bulma's global variables
+$family-sans-serif: "Lato", sans-serif;
+$primary: $climb-blue;
+$warning: $sandy-brown;
+$danger: $imperial-red;
+$link: $celadon-blue;
+$success: $illuminating-emerald;
+
+// Update component variables
+$navbar-item-color: $white;
+$navbar-background-color: $grey-darker;
+$navbar-item-hover-color: $white;
+$navbar-item-hover-background-color: $black-ter;
+
+$footer-background-color: $grey-dark;
+$footer-color: $white;
+$footer-padding: 3rem 1.5rem;
+
+@import "~bulma/bulma";
+
+// Bulma tooltip
+$tooltip-radius: 6px;
+@import "@creativebulma/bulma-tooltip";
+
+// Vue Toastification
+@import "~vue-toastification/dist/index.css";
+
+.Vue-Toastification__toast--default {
+  background-color: $primary;
+}
+.Vue-Toastification__toast--info {
+  background-color: $celadon-blue;
+}
+.Vue-Toastification__toast--success {
+  background-color: $success;
+}
+.Vue-Toastification__toast--error {
+  background-color: $danger;
+}
+.Vue-Toastification__toast--warning {
+  background-color: $warning;
+}
+
+// Page layout, sticky footer
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+
+// Header
+.logo-header {
+  font-family: "Bungee", sans-serif;
+  font-size: 2.5rem;
+  line-height: 2.5rem;
+}
+
+.is-primary-gradient {
+  background-color: #264653;
+  background-image: linear-gradient(0deg, #264653 0%, #363636 100%);
+}
+
+.hide-navbar-logo .navbar .logo-header {
+  display: none;
+}

@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('openstack', '0010_regionsettings_floating_ip_pool'),
+        ("openstack", "0010_regionsettings_floating_ip_pool"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='regionsettings',
-            name='floating_ip_pool',
+            model_name="regionsettings",
+            name="floating_ip_pool",
             field=models.CharField(blank=True, max_length=50),
         ),
     ]

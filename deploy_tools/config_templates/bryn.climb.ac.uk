@@ -26,10 +26,6 @@ server {
     access_log                      /var/log/nginx/bryn.climb.ac.uk.access.log;
     error_log                       /var/log/nginx/bryn.climb.ac.uk.error.log;
 
-    location /static {
-        alias /home/ubuntu/sites/bryn.climb.ac.uk/static;
-    }
-
     location /media {
         alias /home/ubuntu/sites/bryn.climb.ac.uk/media;
     }

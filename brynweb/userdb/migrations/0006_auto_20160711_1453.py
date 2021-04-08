@@ -8,17 +8,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0005_auto_20160711_1447'),
+        ("userdb", "0005_auto_20160711_1447"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='TeamMembers',
-            new_name='TeamMember',
+            old_name="TeamMembers",
+            new_name="TeamMember",
         ),
         migrations.AlterField(
-            model_name='team',
-            name='name',
-            field=models.CharField(help_text='e.g. Bacterial pathogenomics group', max_length=100, verbose_name='Group or team name'),
+            model_name="team",
+            name="name",
+            field=models.CharField(
+                help_text="e.g. Bacterial pathogenomics group",
+                max_length=100,
+                verbose_name="Group or team name",
+            ),
         ),
     ]

@@ -9,19 +9,23 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0015_auto_20160712_0708'),
+        ("userdb", "0015_auto_20160712_0708"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='userprofile',
-            old_name='default_region',
-            new_name='current_region',
+            model_name="userprofile",
+            old_name="default_region",
+            new_name="current_region",
         ),
         migrations.AddField(
-            model_name='team',
-            name='default_region',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='userdb.Region'),
+            model_name="team",
+            name="default_region",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="userdb.Region",
+            ),
             preserve_default=False,
         ),
     ]

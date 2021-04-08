@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0009_auto_20160711_1916'),
+        ("userdb", "0009_auto_20160711_1916"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='team',
-            name='verified',
+            model_name="team",
+            name="verified",
             field=models.BooleanField(default=False),
         ),
     ]

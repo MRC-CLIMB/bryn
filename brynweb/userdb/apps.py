@@ -1,7 +1,9 @@
-from __future__ import unicode_literals
-
 from django.apps import AppConfig
 
 
 class UserdbConfig(AppConfig):
-    name = 'userdb'
+    name = "userdb"
+
+    def ready(self):
+        # Signal registration
+        import userdb.signals  # noqa

@@ -9,28 +9,41 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0019_auto_20160716_0733'),
-        ('openstack', '0008_actionlog'),
+        ("userdb", "0019_auto_20160716_0733"),
+        ("openstack", "0008_actionlog"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='HypervisorStats',
+            name="HypervisorStats",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('last_updated', models.DateTimeField(auto_now=True)),
-                ('hypervisor_count', models.IntegerField()),
-                ('disk_available_least', models.IntegerField()),
-                ('free_disk_gb', models.IntegerField()),
-                ('free_ram_mb', models.IntegerField()),
-                ('local_gb', models.IntegerField()),
-                ('local_gb_used', models.IntegerField()),
-                ('memory_mb', models.IntegerField()),
-                ('memory_mb_used', models.IntegerField()),
-                ('running_vms', models.IntegerField()),
-                ('vcpus', models.IntegerField()),
-                ('vcpus_used', models.IntegerField()),
-                ('region', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='userdb.Region')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+                ("hypervisor_count", models.IntegerField()),
+                ("disk_available_least", models.IntegerField()),
+                ("free_disk_gb", models.IntegerField()),
+                ("free_ram_mb", models.IntegerField()),
+                ("local_gb", models.IntegerField()),
+                ("local_gb_used", models.IntegerField()),
+                ("memory_mb", models.IntegerField()),
+                ("memory_mb_used", models.IntegerField()),
+                ("running_vms", models.IntegerField()),
+                ("vcpus", models.IntegerField()),
+                ("vcpus_used", models.IntegerField()),
+                (
+                    "region",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, to="userdb.Region"
+                    ),
+                ),
             ],
         ),
     ]

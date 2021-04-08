@@ -4,11 +4,11 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0012_auto_20160711_2131'),
+        ("userdb", "0012_auto_20160711_2131"),
     ]
 
-    operations = [
-    ]
+    operations = []

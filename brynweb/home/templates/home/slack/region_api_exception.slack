@@ -1,5 +1,0 @@
-{% extends django_slack %}
-
-{% block text %}
-    {{ user.first_name }} {{ user.last_name }} from team {{ team.id }}:{{ team.name }} just tried to use {{ region.name }}, but an exception occurred: {{ e }}
-{% endblock %}

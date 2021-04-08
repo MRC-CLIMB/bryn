@@ -1,0 +1,63 @@
+{% extends "userdb/base_primary_card.html" %}
+
+{% block card_column_size_classes %}is-full-tablet is-full-desktop is-two-thirds-widescreen{% endblock %}
+
+{% block above_card %}
+  <h1 class="title">Team registration</h1>
+{% endblock %}
+
+{% block card_content %}
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="columns is-multiline">
+      {% if user_form.non_field_errors or team_form.non_field_errors %}
+        <div class="column is-full">
+          {% include 'includes/form_non_field_errors.html' with errors=user_form.non_field_errors %}
+          {% include 'includes/form_non_field_errors.html' with errors=team_form.non_field_errors %}
+        </div>
+      {% endif %}
+
+      <div class="column is-half">
+        <h2 class="subtitle has-text-dark">Primary user details</h2>
+
+        {% include "includes/form_field.html" with field=user_form.email fa_class="fas fa-envelope" only %}
+  
+        <div class="columns mb-0">
+          <div class="column is-half">
+           {% include "includes/form_field.html" with field=user_form.first_name only %} 
+          </div>
+          <div class="column is-half">
+           {% include "includes/form_field.html" with field=user_form.last_name only %} 
+          </div>
+        </div>
+
+        {% include "includes/form_field.html" with field=user_form.password1 fa_class="fas fa-lock" only %}
+        {% include "includes/form_field.html" with field=user_form.password2 fa_class="fas fa-lock" only %}
+        {% include "includes/form_field.html" with field=team_form.position fa_class="fas fa-user-graduate" only %}
+        {% include "includes/form_field.html" with field=team_form.phone_number fa_class="fas fa-phone" only %}
+      </div>
+
+      <div class="column is-half">
+       <h2 class="subtitle has-text-dark">Team details</h2>
+
+       {% include "includes/form_field.html" with field=team_form.name fa_class="fas fa-users" only %}
+       {% include "includes/form_field.html" with field=team_form.institution fa_class="fas fa-university" only %}
+       {% include "includes/form_field.html" with field=team_form.department fa_class="fas fa-building" only %}
+       {% include "includes/form_field.html" with field=team_form.research_interests only %}
+       {% include "includes/form_field.html" with field=team_form.intended_climb_use only %}
+       {% include "includes/form_field.html" with field=team_form.held_mrc_grants only %}
+      </div>
+
+      <div class="column is-full">
+        <div class="field">
+          <div class="control">
+            <button type="submit" class="button is-success is-medium is-fullwidth">
+              Register
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock %}

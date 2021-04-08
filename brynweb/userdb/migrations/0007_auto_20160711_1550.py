@@ -9,13 +9,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0006_auto_20160711_1453'),
+        ("userdb", "0006_auto_20160711_1453"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='invitation',
-            name='to_team',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='userdb.Team', verbose_name='Team to invite user to'),
+            model_name="invitation",
+            name="to_team",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="userdb.Team",
+                verbose_name="Team to invite user to",
+            ),
         ),
     ]

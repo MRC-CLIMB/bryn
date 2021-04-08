@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0017_team_tenants_available'),
+        ("userdb", "0017_team_tenants_available"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='region',
-            name='disabled',
+            model_name="region",
+            name="disabled",
             field=models.BooleanField(default=True),
         ),
     ]

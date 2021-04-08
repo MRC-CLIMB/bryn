@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0018_region_disabled'),
+        ("userdb", "0018_region_disabled"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='region',
-            name='disabled',
+            model_name="region",
+            name="disabled",
             field=models.BooleanField(default=False),
         ),
     ]

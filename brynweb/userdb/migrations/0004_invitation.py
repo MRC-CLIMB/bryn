@@ -11,22 +11,41 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0007_alter_validators_add_error_messages'),
+        ("auth", "0007_alter_validators_add_error_messages"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('userdb', '0003_auto_20160711_1345'),
+        ("userdb", "0003_auto_20160711_1345"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Invitation',
+            name="Invitation",
             fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('email', models.EmailField(max_length=254)),
-                ('message', models.TextField()),
-                ('accepted', models.BooleanField()),
-                ('date', models.DateTimeField(auto_now_add=True)),
-                ('made_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('to_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auth.Group')),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254)),
+                ("message", models.TextField()),
+                ("accepted", models.BooleanField()),
+                ("date", models.DateTimeField(auto_now_add=True)),
+                (
+                    "made_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "to_group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="auth.Group"
+                    ),
+                ),
             ],
         ),
     ]

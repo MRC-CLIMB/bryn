@@ -1,0 +1,2 @@
+# Ignore HTML files due Django/Vue templating quirks
+*.html

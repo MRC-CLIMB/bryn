@@ -8,19 +8,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('openstack', '0005_auto_20160712_1814'),
+        ("openstack", "0005_auto_20160712_1814"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='regionsettings',
-            name='public_network_id',
-            field=models.CharField(default='', max_length=50),
+            model_name="regionsettings",
+            name="public_network_id",
+            field=models.CharField(default="", max_length=50),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='regionsettings',
-            name='requires_network_setup',
+            model_name="regionsettings",
+            name="requires_network_setup",
             field=models.BooleanField(default=False),
         ),
     ]

@@ -1,4 +1,5 @@
 {% extends "email/email_base.html" %}
+{% load custom_tags %}
 
 {% block title %}{% include 'userdb/email/user_invite_subject.txt' %}{% endblock %}
 {% block subject %}{% include 'userdb/email/user_invite_subject.txt' %}{% endblock %}
@@ -15,8 +16,5 @@
   {% endif %}
 
   <p>If you wish to become a member of this team and create a CLIMB account then please visit the following link:<br>
-  <a href="https://bryn.climb.ac.uk{{ url }}">https://bryn.climb.ac.uk{{ url }}</a></p>
-
-  <p>Best regards,<br>
-  <p>The CLIMB Project</p>
+  <span style="white-space: nowrap; font-size: 0.8em;">{{ url|absolute_url|urlize }}</span></p>
 {% endblock %}

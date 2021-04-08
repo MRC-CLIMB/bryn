@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/site.webmanifest' %}">
+    
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+
+  <body class="has-navbar-fixed-top {% block body_extra_classes %}{% endblock %}">
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+
+    {% include "includes/top_menu.html" %}
+    
+    {{ regions|json_script:'regionsData' }}
+    {{ teams|json_script:'teamsData' }}
+    {{ user|json_script:'userData' }}
+
+    <div style="display: none" id="licenceTerms">
+      {{ licence_terms|safe }}
+    </div>
+    
+    <div id="app"></div>
+
+  </body>
+</html>

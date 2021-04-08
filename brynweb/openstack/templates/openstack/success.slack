@@ -1,7 +1,0 @@
-{% extends django_slack %}
-
-{% block text %}
-
-Yay! Server launched!  Site: {{ log.tenant.region }}, {{ log.message }}, User: {{ log.user.first_name }} {{ log.user.last_name }}, Tenant: {{ log.tenant }}
-
-{% endblock %}

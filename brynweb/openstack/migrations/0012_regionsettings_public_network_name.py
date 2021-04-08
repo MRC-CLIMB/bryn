@@ -8,14 +8,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('openstack', '0011_auto_20160717_0725'),
+        ("openstack", "0011_auto_20160717_0725"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='regionsettings',
-            name='public_network_name',
-            field=models.CharField(default='', max_length=50),
+            model_name="regionsettings",
+            name="public_network_name",
+            field=models.CharField(default="", max_length=50),
             preserve_default=False,
         ),
     ]

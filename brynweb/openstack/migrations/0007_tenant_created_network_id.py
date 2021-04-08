@@ -8,14 +8,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('openstack', '0006_auto_20160714_0646'),
+        ("openstack", "0006_auto_20160714_0646"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tenant',
-            name='created_network_id',
-            field=models.CharField(default='', max_length=50),
+            model_name="tenant",
+            name="created_network_id",
+            field=models.CharField(default="", max_length=50),
             preserve_default=False,
         ),
     ]

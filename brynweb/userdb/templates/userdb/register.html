@@ -1,55 +1,79 @@
 {% extends "base.html" %}
-{% load bootstrap3 static %}
-
-{% block extra_js %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
-  <script src="{% static 'userdb/js/institution_typeahead.js' %}"></script>
-{% endblock %}
-
-{% block extra_css %}
-  <link rel="stylesheet" href="{% static 'userdb/css/typeaheadjs.css' %}">
-{% endblock %}
-
-{% block full_jumbo %}
-  <div class="jumbotron bg-grey">
-    <div class="container">
-      <h1>Register for a CLIMB group account</h1>
-    </div>
-  </div>
-{% endblock %}
+{% load static widget_tweaks %}
 
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <form action="?" method="post" class="form">
-            {% csrf_token %}
-            {% bootstrap_form userform %}
-            {% bootstrap_form teamform %}
-            {% buttons %}
-              <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
-            {% endbuttons %}
-        </form>
-      </div>
-      <div class="col-md-5 col-md-offset-1">
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            To register for a CLIMB group account, you must:
-          </div>
-          <div class="panel-body">
-            <ul>
-              <li>Be a UK academic or public sector worker working on microbial genomics</li>
-              <li>Run your own research group (i.e. be a principal investigator)</li>
-              <li>Have a .ac.uk (or .gov.uk or .nhs.uk email account)</li>
-              <li><a href="https://discourse.climb.ac.uk/t/climb-big-data-terms-and-conditions-for-users-may-2020/1236">Agree to our service terms and conditions</a></li>
-            </ul>
+  <section class="hero is-primary is-primary-gradient is-fullheight-with-navbar">
+    <div class="hero-body">
+      <div class="container">
 
-            <p>Group logins are subject to verification by CLIMB staff.
-            Once you have a group login you can invite your group members.
-            </p>
+        <div class="columns is-centered">
+          <div class="column is-full-tablet is-full-desktop is-three-quarters-widescreen">
+
+            <h1 class="title">Team registration</h1>
+
+            <!-- Tiles -->
+            <div class="tile is-ancestor">
+              <div class="tile is-5 is-vertical is-parent">
+                <div class="tile is-child notification is-success content">
+                  <p class="subtitle has-text-weight-semibold">Primary users</p>
+                  <p>Those with salaried positions in UK academic institutions, government agencies or healthcare systems who have the status of independent researchers and/or team leaders.</p>
+                  <p class="has-text-weight-semibold">You're in the right place! Once you've registered and have been approved, you can invite secondary users.</p>
+                </div>
+                <div class="tile is-child notification is-info content">
+                  <p class="subtitle has-text-weight-semibold">Secondary users</p>
+                  <p>Those working under the direction of primary users who include students, post-doctoral researchers and overseas collaborators.</p>
+                  <p class="has-text-weight-semibold">You'll need to ask your team's primary user to send you an invitation before you can register.</p>
+                </div>
+              </div>
+              <div class="tile is-parent">
+                <div class="tile is-child box">
+                  <p class="title has-text-dark is-size-4">Terms and Conditions</p>
+
+                  <div class="box content" style="max-height: 300px; overflow-y: auto;">
+                    {{ licence_terms|safe }} 
+                  </div>
+
+                  <div class="content">                    
+                    <form method="post">
+                      {% csrf_token %}
+                      <p class="ml-5">
+                        {% for field in form %}
+                          <label class="checkbox">
+                            {{ field }}
+                            {{ field.label }}
+                          </label>
+                        {% endfor %}
+                      </p>
+
+                      <div class="field">
+                        <div class="control">
+                          <button id="continue_btn" type="submit" class="button is-success is-medium is-fullwidth" disabled>
+                            Continue to registration
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END tiles -->
+
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module">
+    // Yes, only supported on 90%+ of browsers but not essential for page to function
+    import CheckboxFormGuard from "{% static 'js/CheckboxFormGuard.js' %}";
+
+    document.addEventListener("DOMContentLoaded", function(){
+      new CheckboxFormGuard(["id_agree_terms", "id_is_primary_user"], "continue_btn");
+    });
+  </script>
 {% endblock %}

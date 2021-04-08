@@ -1,9 +1,14 @@
-AUTHENTICATION = {'bham'    : {'AUTH_NAME' : '',
-                               'AUTH_PASSWORD' : '',
-                               'TENANT_NAME' : '',
-                               'AUTH_URL' : 'http://birmingham.climb.ac.uk:5000/v2.0/'},
-                  'cardiff' : {'AUTH_NAME' : '',
-                               'AUTH_PASSWORD' : '',
-                               'TENANT_NAME'   : '',
-                               'AUTH_URL'      : 'http://cardiff.climb.ac.uk:5000' }}
-
+AUTHENTICATION = {
+    "bham": {
+        "TENANT_NAME": "",
+        "AUTH_URL": "http://birmingham.climb.ac.uk:5000/v2.0/",
+        "ADMIN_URL": "",
+        "CIDR": "147.188.173.0/24",
+        "EC2_SECURE": False,
+        "EC2_PORT": "8773",
+        "EC2_ENDPOINT": "birmingham.climb.ac.uk",
+        "SERVICE_USERNAME": "",
+        "SERVICE_PASSWORD": "",
+        "ADMIN_USERNAME": "",
+        "ADMIN_PASSWORD": "",
+    },

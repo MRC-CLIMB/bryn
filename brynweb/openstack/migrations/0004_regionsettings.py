@@ -9,17 +9,30 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userdb', '0016_auto_20160712_0722'),
-        ('openstack', '0003_remove_tenant_auth_username'),
+        ("userdb", "0016_auto_20160712_0722"),
+        ("openstack", "0003_remove_tenant_auth_username"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RegionSettings',
+            name="RegionSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('gvl_image_id', models.CharField(max_length=50)),
-                ('region', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='userdb.Region')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("gvl_image_id", models.CharField(max_length=50)),
+                (
+                    "region",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="userdb.Region"
+                    ),
+                ),
             ],
         ),
     ]

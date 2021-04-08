@@ -1,0 +1,16 @@
+{% extends "email/email_base.html" %}
+{% load custom_tags %}
+
+{% block title %}{% include 'openstack/email/server_lease_expiry_reminder_subject.txt' %}{% endblock %}
+{% block subject %}{% include 'openstack/email/server_lease_expiry_reminder_subject.txt' %}{% endblock %}
+
+{% block content %}
+  <p>Hi {{ user.first_name }}!</p>
+
+  <p>The lease for your server '{{ server_name }}' is due to expire in {% if hours_remaining <= 24 %}{{ hours_remaining }} hours{% else %}{{ days_remaining }} days{% endif %} ({{ expiry }})</p>
+
+  <p><strong>If you do not renew your lease, this server may be automatically shelved to free up capacity.</strong></p>
+
+  <p>If you are still using this server, you can renew your lease by clicking the following link:<br />
+  <span style="white-space: nowrap; font-size: 0.8em;">{{ renewal_url|absolute_url|urlize }}</span></p>
+{% endblock %}

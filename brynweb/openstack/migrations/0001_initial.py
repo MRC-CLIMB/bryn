@@ -11,19 +11,37 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('userdb', '0013_auto_20160711_2132'),
+        ("userdb", "0013_auto_20160711_2132"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Tenant',
+            name="Tenant",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tenant_name', models.CharField(max_length=50)),
-                ('auth_username', models.CharField(max_length=50)),
-                ('auth_password', models.CharField(max_length=50)),
-                ('region', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='userdb.Region')),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='userdb.Team')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("tenant_name", models.CharField(max_length=50)),
+                ("auth_username", models.CharField(max_length=50)),
+                ("auth_password", models.CharField(max_length=50)),
+                (
+                    "region",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="userdb.Region"
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="userdb.Team"
+                    ),
+                ),
             ],
         ),
     ]
